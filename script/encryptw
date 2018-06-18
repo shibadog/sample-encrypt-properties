@@ -1,0 +1,16 @@
+#!/usr/bin/env sh
+
+SCRIPT_DIR=$(cd $(dirname $0);pwd)
+PARENT_DIR=$(cd $(dirname $0);cd ..;pwd)
+
+if [ ! -d ${SCRIPT_DIR}/work ]; then
+    mkdir ${SCRIPT_DIR}/work
+    JASYPT_URL=https://sourceforge.net/projects/jasypt/files/latest/download?source=files
+    curl -kL -o ${SCRIPT_DIR}/work/jasypt.zip ${JASYPT_URL}
+    unzip ${SCRIPT_DIR}/work/jasypt.zip -d ${SCRIPT_DIR}/work
+    find ${SCRIPT_DIR}/work/ -name "jasypt-*" | head -n 1 | sed "s|/|\n|g" | grep "^jasypt-" > ${SCRIPT_DIR}/work/path.txt
+    chmod 775 ${SCRIPT_DIR}/work/$(cat ${SCRIPT_DIR}/work/path.txt)/bin/decrypt.sh
+    chmod 775 ${SCRIPT_DIR}/work/$(cat ${SCRIPT_DIR}/work/path.txt)/bin/encrypt.sh
+fi
+
+${SCRIPT_DIR}/work/$(cat ${SCRIPT_DIR}/work/path.txt)/bin/encrypt.sh "$@"
