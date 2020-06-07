@@ -34,16 +34,16 @@ jasyptを容易にspring bootへ組み込むことをできるようにしたラ
 ```
 dependencies {
   compile('org.springframework.boot:spring-boot-starter')
-  compile('com.github.ulisesbocchio:jasypt-spring-boot:1.17') // これ
+  compile('com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.3') // これ
      
   compileOnly 'org.projectlombok:lombok'
+  annotationProcessor 'org.projectlombok:lombok'
  
   testCompile('org.springframework.boot:spring-boot-starter-test')
 }
 ```
 2. 起動ポイント(Application.java)のクラスに `@EnableEncryptableProperties` をつける。  
 ```
-@SpringBootApplication
 @Slf4j
 @EnableEncryptableProperties
 public class Application {
@@ -53,7 +53,7 @@ public class Application {
 ```
 3. jasypt公式から本体をダウンロードする。
 4. zipファイルを解凍した中にあるbinフォルダ内の encrypt.sh (または、 encrypt.bat )で対象文字列を暗号化する。  
-    `> encrypt input={{暗号化対象文字列}} password={{パスフレーズ}}`
+    `> encrypt input={{暗号化対象文字列}} password={{パスフレーズ}} verbose=false algorithm=PBEWITHHMACSHA512ANDAES_256 ivGeneratorClassName=org.jasypt.iv.RandomIvGenerator`
 5. 4.で出力された暗号化された文字とパスフレーズを application.proprties に設定する。  
 ```
 jasypt.encryptor.password={{パスフレーズ}}
@@ -66,11 +66,11 @@ test.password=ENC({{暗号化済み文字列}})
 
 プロジェクトルートにて、以下のコマンドで暗号化可能。
 
-`script/encryptw input={暗号化対象文字列} password={パスフレーズ}`
+`script/encryptw input={暗号化対象文字列} password={パスフレーズ}  verbose=false algorithm=PBEWITHHMACSHA512ANDAES_256 ivGeneratorClassName=org.jasypt.iv.RandomIvGenerator`
 
 同様に、複合も以下の通り。
 
-`script/decryptw input={暗号文} password={パスフレーズ}`
+`script/decryptw input={暗号文} password={パスフレーズ}  verbose=false algorithm=PBEWITHHMACSHA512ANDAES_256 ivGeneratorClassName=org.jasypt.iv.RandomIvGenerator`
 
 ## gradle
 
@@ -81,7 +81,16 @@ Gradleで `bootRun` する際に、複合させるための手段は以下の通
 2. 起動時にパラメータとして渡す。  
 ` ./gradlew bootRun -Djasypt.encriptor.password=xxxx`
 
+## 注記
+
+Jasypt cliを使っての暗号化とデフォルトの暗号化アルゴリズムが変わってしまったため、暗号化する際に明示的に指定する必要がある。
+
+また、デフォルトのIV生成ロジックだと成功しないという問題があるため、こちらも明示的に設定する必要がある。
+
+ビルドツールにmavenを利用している場合、maven-pluginでエンコードするツールがjasypt-spring-bootのREADMEで紹介されている（同じプロダクトに入ってるかも）。
+
 ## 参考資料
 
 * jasypt
 * ulisesbocchio/jasypt-spring-boot
+* https://stackoverflow.com/questions/59777506/jasypt-cli-error-operation-not-possible-bad-input-or-parameters

@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        springBootVersion = '2.0.2.RELEASE'
+        springBootVersion = '2.3.0.RELEASE'
     }
     repositories {
         mavenCentral()
@@ -29,14 +29,15 @@ repositories {
     mavenCentral()
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = 11
+targetCompatibility = 11
 
 dependencies {
     compile('org.springframework.boot:spring-boot-starter')
-    compile('com.github.ulisesbocchio:jasypt-spring-boot:1.17')
+    compile('com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.3')
 
     compileOnly('org.projectlombok:lombok')
+	annotationProcessor('org.projectlombok:lombok')
 
     testCompile('org.springframework.boot:spring-boot-starter-test')
 }

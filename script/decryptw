@@ -2,10 +2,11 @@
 
 SCRIPT_DIR=$(cd $(dirname $0);pwd)
 PARENT_DIR=$(cd $(dirname $0);cd ..;pwd)
+VERSION=1.9.3
 
 if [ ! -d ${SCRIPT_DIR}/work ]; then
     mkdir ${SCRIPT_DIR}/work
-    JASYPT_URL=https://sourceforge.net/projects/jasypt/files/latest/download?source=files
+    JASYPT_URL=https://github.com/jasypt/jasypt/releases/download/jasypt-${VERSION}/jasypt-${VERSION}-dist.zip
     curl -kL -o ${SCRIPT_DIR}/work/jasypt.zip ${JASYPT_URL}
     unzip ${SCRIPT_DIR}/work/jasypt.zip -d ${SCRIPT_DIR}/work
     find ${SCRIPT_DIR}/work/ -name "jasypt-*" | head -n 1 | sed "s|/|\n|g" | grep "^jasypt-" > ${SCRIPT_DIR}/work/path.txt
